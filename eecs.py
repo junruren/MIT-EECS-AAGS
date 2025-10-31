@@ -3,8 +3,8 @@ MIT EECS Education Administration Portal interface module.
 
 This module provides functions to scrape data from the MIT EECS Education
 Administration Portal pages, including:
-- get_who_is_teaching_what(): Fetch course schedule data
-- get_aags(): Fetch list of AAGS (Approved Advanced Graduate Subjects) class numbers
+- get_who_is_teaching_what(): Fetch subject schedule data
+- get_aags(): Fetch list of AAGS (Approved Advanced Graduate Subjects) subject numbers
 """
 
 import requests
@@ -93,20 +93,20 @@ def _parse_table(soup: BeautifulSoup) -> pd.DataFrame:
         soup: BeautifulSoup object of the page
         
     Returns:
-        DataFrame containing the course information
+        DataFrame containing the subject information
     """
     # Find the main table
     table = soup.find('table')
     if not table:
-        raise ValueError("Could not find course table on the page")
+        raise ValueError("Could not find subject table on the page")
     
     # The table structure has:
     # - First header row: "Courses offered in X" (colspan=3), "Lecturers", "Recitation instructors"
     # - Second row: explanatory notes
-    # - Body: actual course data with 5 columns (Area, Course, Title, Lecturers, TAs)
+    # - Body: actual subject data with 5 columns (Area, Subject, Title, Lecturers, TAs)
     
     # Define headers based on the known structure
-    headers = ['Area', 'Course', 'Title', 'Lecturers', 'TAs']
+    headers = ['Area', 'Subject', 'Title', 'Lecturers', 'TAs']
     
     # Extract data rows
     tbody = table.find('tbody')
@@ -143,7 +143,7 @@ def get_who_is_teaching_what(semester: Optional[str] = None) -> Tuple[pd.DataFra
     
     Returns:
         Tuple of (dataframe, semester_string) where:
-        - dataframe: pandas DataFrame containing the course information
+        - dataframe: pandas DataFrame containing the subject information
         - semester_string: The semester in format "Spring YYYY" or "Fall YYYY"
     
     Raises:
@@ -152,7 +152,7 @@ def get_who_is_teaching_what(semester: Optional[str] = None) -> Tuple[pd.DataFra
         
     Example:
         >>> df, semester = get_who_is_teaching_what("Spring 2026")
-        >>> print(f"Courses for {semester}")
+        >>> print(f"Subjects for {semester}")
         >>> print(df.head())
         
         >>> df, semester = get_who_is_teaching_what()  # Current semester
@@ -183,15 +183,15 @@ def get_who_is_teaching_what(semester: Optional[str] = None) -> Tuple[pd.DataFra
 
 def get_aags():
     """
-    Scrape the list of AAGS (Approved Advanced Graduate Subjects) class numbers
+    Scrape the list of AAGS (Approved Advanced Graduate Subjects) subject numbers
     from the MIT EECS degree requirements page.
     
-    Returns a list of strings containing AAGS course numbers like "6.5060", "18.435", 
-    "2.111", etc. These are the courses that satisfy the AAGS requirement for MIT EECS
+    Returns a list of strings containing AAGS subject numbers like "6.5060", "18.435", 
+    "2.111", etc. These are the subjects that satisfy the AAGS requirement for MIT EECS
     Master's and PhD programs.
     
     Returns:
-        list: A list of strings containing AAGS class numbers
+        list: A list of strings containing AAGS subject numbers
         
     Raises:
         requests.RequestException: If there's an error fetching the page
@@ -199,8 +199,8 @@ def get_aags():
         
     Example:
         >>> aags_list = get_aags()
-        >>> print(f"Found {len(aags_list)} AAGS classes")
-        >>> print(aags_list[:5])  # First 5 classes
+        >>> print(f"Found {len(aags_list)} AAGS subjects")
+        >>> print(aags_list[:5])  # First 5 subjects
     """
     url = "https://eecsis.mit.edu/degree_requirements.html"
     
@@ -223,31 +223,31 @@ def get_aags():
     # Find the next div with style containing 'margin-left'
     aags_div = aags_anchor.find_next('div', style=re.compile(r'margin-left'))
     if not aags_div:
-        raise ValueError("Could not find AAGS course list div")
+        raise ValueError("Could not find AAGS subject list div")
     
-    # Extract all course links within the AAGS div
-    # Course numbers are in <a> tags with class 'annotated-link'
-    course_links = aags_div.find_all('a', class_='annotated-link')
+    # Extract all subject links within the AAGS div
+    # Subject numbers are in <a> tags with class 'annotated-link'
+    subject_links = aags_div.find_all('a', class_='annotated-link')
     
-    # Extract course numbers from the links
-    aags_classes = []
-    for link in course_links:
+    # Extract subject numbers from the links
+    aags_subjects = []
+    for link in subject_links:
         # Get only the direct text content (not from child elements)
-        # The course number is the text directly in the <a> tag, before any <div> children
-        course_text = link.find(text=True, recursive=False)
+        # The subject number is the text directly in the <a> tag, before any <div> children
+        subject_text = link.find(text=True, recursive=False)
         
-        if course_text:
-            course_text = course_text.strip()
-            # Course numbers match pattern like "6.5060", "18.435", "2.111", etc.
-            match = re.match(r'^([\d]+\.[\d]+)', course_text)
+        if subject_text:
+            subject_text = subject_text.strip()
+            # Subject numbers match pattern like "6.5060", "18.435", "2.111", etc.
+            match = re.match(r'^([\d]+\.[\d]+)', subject_text)
             if match:
-                course_number = match.group(1)
-                aags_classes.append(course_number)
+                subject_number = match.group(1)
+                aags_subjects.append(subject_number)
     
-    if not aags_classes:
-        raise ValueError("No AAGS classes found in the section")
+    if not aags_subjects:
+        raise ValueError("No AAGS subjects found in the section")
     
-    return aags_classes
+    return aags_subjects
 
 
 if __name__ == "__main__":
@@ -255,8 +255,8 @@ if __name__ == "__main__":
     print("Fetching current semester data...")
     df, sem = get_who_is_teaching_what()
     print(f"\nSemester: {sem}")
-    print(f"Number of courses: {len(df)}")
-    print("\nFirst 5 courses:")
+    print(f"Number of subjects: {len(df)}")
+    print("\nFirst 5 subjects:")
     print(df.head())
     
     print("\n" + "="*80 + "\n")
@@ -264,6 +264,6 @@ if __name__ == "__main__":
     print("Fetching Spring 2026 data...")
     df_spring, sem_spring = get_who_is_teaching_what("Spring 2026")
     print(f"\nSemester: {sem_spring}")
-    print(f"Number of courses: {len(df_spring)}")
-    print("\nFirst 5 courses:")
+    print(f"Number of subjects: {len(df_spring)}")
+    print("\nFirst 5 subjects:")
     print(df_spring.head())

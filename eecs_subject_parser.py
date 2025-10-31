@@ -1,14 +1,14 @@
 """
-MIT EECS Course Number Parser
+MIT EECS Subject Number Parser
 
-This module provides functions to parse and normalize EECS course numbers
+This module provides functions to parse and normalize EECS subject numbers
 that may mix new and old numbering systems.
 
 Starting Fall 2022, EECS transitioned from 3-digit (6.xxx) to 4-digit (6.yyyy)
-course numbering. Some systems display combo formats like "6.1220J[6.046]"
+subject numbering. Some systems display combo formats like "6.1220J[6.046]"
 where the new number appears outside brackets and old number inside.
 
-This module extracts the new-format course numbers and handles expansion
+This module extracts the new-format subject numbers and handles expansion
 of multiple subjects (e.g., "6.1000/A/B" → ["6.1000", "6.100A", "6.100B"]).
 """
 
@@ -16,9 +16,9 @@ import re
 from typing import List
 
 
-def parse_course_number(course_string: str) -> List[str]:
+def parse_subject_number(subject_string: str) -> List[str]:
     """
-    Parse an EECS course number string that may contain new/old numbering mix.
+    Parse an EECS subject number string that may contain new/old numbering mix.
 
     The function handles various formats and always returns a list of strings:
     - Combo format: "6.1220J[6.046]" → ["6.1220J"]
@@ -27,37 +27,37 @@ def parse_course_number(course_string: str) -> List[str]:
     - Lettered subjects: "6.UAR" → ["6.UAR"]
 
     Args:
-        course_string: The course number string to parse
+        subject_string: The subject number string to parse
 
     Returns:
-        List[str]: List of parsed course number strings (always a list, even for single courses)
+        List[str]: List of parsed subject number strings (always a list, even for single subjects)
 
     Examples:
-        >>> parse_course_number("6.1220J[6.046]")
+        >>> parse_subject_number("6.1220J[6.046]")
         ['6.1220J']
 
-        >>> parse_course_number("6.1000/A/B[6.0001+2]")
+        >>> parse_subject_number("6.1000/A/B[6.0001+2]")
         ['6.1000', '6.100A', '6.100B']
 
-        >>> parse_course_number("6.UAR")
+        >>> parse_subject_number("6.UAR")
         ['6.UAR']
 
-        >>> parse_course_number("6.0001")
+        >>> parse_subject_number("6.0001")
         ['6.0001']
     """
-    if not course_string or not course_string.strip():
-        raise ValueError("Course string cannot be empty")
+    if not subject_string or not subject_string.strip():
+        raise ValueError("Subject string cannot be empty")
 
-    course_string = course_string.strip()
+    subject_string = subject_string.strip()
 
     # Step 1: Extract the new number portion (before brackets if present)
     # Handle combo format like "6.1220J[6.046]" → extract "6.1220J"
-    if '[' in course_string and ']' in course_string:
+    if '[' in subject_string and ']' in subject_string:
         # Find the position of the opening bracket
-        bracket_start = course_string.find('[')
-        new_number_part = course_string[:bracket_start].strip()
+        bracket_start = subject_string.find('[')
+        new_number_part = subject_string[:bracket_start].strip()
     else:
-        new_number_part = course_string
+        new_number_part = subject_string
 
     # Step 2: Check for slash notation indicating multiple subjects
     # Handle formats like "6.1000/A/B" → ["6.1000", "6.100A", "6.100B"]
@@ -67,9 +67,9 @@ def parse_course_number(course_string: str) -> List[str]:
         return [new_number_part]
 
 
-def _expand_multiple_subjects(course_part: str) -> List[str]:
+def _expand_multiple_subjects(subject_part: str) -> List[str]:
     """
-    Expand a course number with slash notation into individual subjects.
+    Expand a subject number with slash notation into individual subjects.
 
     Examples:
         "6.1000/A/B" → ["6.1000", "6.100A", "6.100B"]
@@ -77,17 +77,17 @@ def _expand_multiple_subjects(course_part: str) -> List[str]:
         "6.1000" → ["6.1000"] (no expansion needed)
 
     Args:
-        course_part: The course number part that may contain slash notation
+        subject_part: The subject number part that may contain slash notation
 
     Returns:
-        List[str]: List of expanded course numbers
+        List[str]: List of expanded subject numbers
     """
     # Split on '/' to get base and suffixes
-    parts = course_part.split('/')
+    parts = subject_part.split('/')
 
     if len(parts) == 1:
         # No slash notation, return as single item list
-        return [course_part]
+        return [subject_part]
 
     # First part is the base number
     base = parts[0].strip()
@@ -103,16 +103,16 @@ def _expand_multiple_subjects(course_part: str) -> List[str]:
     return subjects
 
 
-def is_new_format(course_number: str) -> bool:
+def is_new_format(subject_number: str) -> bool:
     """
-    Check if a course number is in the new 4-digit format.
+    Check if a subject number is in the new 4-digit format.
 
     New format: 4 digits after decimal (6.yyyy)
     Old format: 3 digits after decimal (6.xxx)
     Lettered subjects: unchanged (6.UAR, 6.UAT, etc.)
 
     Args:
-        course_number: The course number to check
+        subject_number: The subject number to check
 
     Returns:
         bool: True if in new format, False otherwise
@@ -128,11 +128,11 @@ def is_new_format(course_number: str) -> bool:
         True  # Lettered subjects are considered "new format" (unchanged)
     """
     # Lettered subjects (no digits after decimal) are unchanged
-    if not re.search(r'\d', course_number.split('.')[1] if '.' in course_number else ''):
+    if not re.search(r'\d', subject_number.split('.')[1] if '.' in subject_number else ''):
         return True
 
     # Extract digits after decimal
-    match = re.match(r'^\d+\.(\d+)', course_number)
+    match = re.match(r'^\d+\.(\d+)', subject_number)
     if not match:
         return False
 
@@ -140,36 +140,36 @@ def is_new_format(course_number: str) -> bool:
     return digits_after_decimal == 4
 
 
-def normalize_course_number(course_string: str) -> List[str]:
+def normalize_subject_number(subject_string: str) -> List[str]:
     """
-    Convenience function that parses and validates course numbers.
+    Convenience function that parses and validates subject numbers.
 
-    This is a wrapper around parse_course_number() that also performs
+    This is a wrapper around parse_subject_number() that also performs
     basic validation on the result.
 
     Args:
-        course_string: The course number string to normalize
+        subject_string: The subject number string to normalize
 
     Returns:
-        List[str]: Normalized course number(s) (always a list)
+        List[str]: Normalized subject number(s) (always a list)
 
     Raises:
-        ValueError: If parsing results in invalid course numbers
+        ValueError: If parsing results in invalid subject numbers
     """
-    result = parse_course_number(course_string)
+    result = parse_subject_number(subject_string)
 
     # Basic validation
-    def validate_single_course(course: str) -> bool:
-        """Validate a single course number format."""
-        if not course or not course.strip():
+    def validate_single_subject(subject: str) -> bool:
+        """Validate a single subject number format."""
+        if not subject or not subject.strip():
             return False
         # Should start with digit(s).digit(s) or digit(s).letter(s)
-        return bool(re.match(r'^\d+\.[\d\w]+$', course.strip()))
+        return bool(re.match(r'^\d+\.[\d\w]+$', subject.strip()))
 
     # Result is always a list now
-    for course in result:
-        if not validate_single_course(course):
-            raise ValueError(f"Invalid course number format in result: '{course}'")
+    for subject in result:
+        if not validate_single_subject(subject):
+            raise ValueError(f"Invalid subject number format in result: '{subject}'")
     return result
 
 
@@ -184,12 +184,12 @@ if __name__ == "__main__":
         "6.036[6.036]",  # Same old and new
     ]
 
-    print("EECS Course Number Parser - Test Cases")
+    print("EECS Subject Number Parser - Test Cases")
     print("=" * 50)
 
     for test_case in test_cases:
         try:
-            result = parse_course_number(test_case)
+            result = parse_subject_number(test_case)
             print(f"Input:  '{test_case}'")
             print(f"Output: {result}")
             print()
