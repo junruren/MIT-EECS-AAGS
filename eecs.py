@@ -1,15 +1,17 @@
 """
-MIT EECS Education Administration Portal Scraper
+MIT EECS Education Administration Portal interface module.
 
-This module provides functionality to access and scrape the MIT EECS department's
-"who is teaching what" page from the Education Administration Portal.
+This module provides functions to scrape data from the MIT EECS Education
+Administration Portal pages, including:
+- get_who_is_teaching_what(): Fetch course schedule data
+- get_aags(): Fetch list of AAGS (Approved Advanced Graduate Subjects) class numbers
 """
 
-import re
-from typing import Optional, Tuple
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+from typing import Optional, Tuple
+import re
 
 
 def _parse_semester(semester: str) -> Tuple[str, int]:
@@ -177,6 +179,75 @@ def get_who_is_teaching_what(semester: Optional[str] = None) -> Tuple[pd.DataFra
     df = _parse_table(soup)
     
     return df, semester
+
+
+def get_aags():
+    """
+    Scrape the list of AAGS (Approved Advanced Graduate Subjects) class numbers
+    from the MIT EECS degree requirements page.
+    
+    Returns a list of strings containing AAGS course numbers like "6.5060", "18.435", 
+    "2.111", etc. These are the courses that satisfy the AAGS requirement for MIT EECS
+    Master's and PhD programs.
+    
+    Returns:
+        list: A list of strings containing AAGS class numbers
+        
+    Raises:
+        requests.RequestException: If there's an error fetching the page
+        ValueError: If the AAGS section cannot be found or parsed
+        
+    Example:
+        >>> aags_list = get_aags()
+        >>> print(f"Found {len(aags_list)} AAGS classes")
+        >>> print(aags_list[:5])  # First 5 classes
+    """
+    url = "https://eecsis.mit.edu/degree_requirements.html"
+    
+    # Fetch the page
+    try:
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
+    except requests.RequestException as e:
+        raise requests.RequestException(f"Failed to fetch page from {url}: {e}")
+    
+    # Parse with BeautifulSoup
+    soup = BeautifulSoup(response.content, 'html.parser')
+    
+    # Find the AAGS anchor
+    aags_anchor = soup.find('a', {'name': 'AAGS'})
+    if not aags_anchor:
+        raise ValueError("Could not find AAGS section on the page")
+    
+    # The AAGS list is in a div that follows the anchor
+    # Find the next div with style containing 'margin-left'
+    aags_div = aags_anchor.find_next('div', style=re.compile(r'margin-left'))
+    if not aags_div:
+        raise ValueError("Could not find AAGS course list div")
+    
+    # Extract all course links within the AAGS div
+    # Course numbers are in <a> tags with class 'annotated-link'
+    course_links = aags_div.find_all('a', class_='annotated-link')
+    
+    # Extract course numbers from the links
+    aags_classes = []
+    for link in course_links:
+        # Get only the direct text content (not from child elements)
+        # The course number is the text directly in the <a> tag, before any <div> children
+        course_text = link.find(text=True, recursive=False)
+        
+        if course_text:
+            course_text = course_text.strip()
+            # Course numbers match pattern like "6.5060", "18.435", "2.111", etc.
+            match = re.match(r'^([\d]+\.[\d]+)', course_text)
+            if match:
+                course_number = match.group(1)
+                aags_classes.append(course_number)
+    
+    if not aags_classes:
+        raise ValueError("No AAGS classes found in the section")
+    
+    return aags_classes
 
 
 if __name__ == "__main__":
