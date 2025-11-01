@@ -4,6 +4,8 @@ A Chrome extension that automatically highlights AAGS (Approved Advanced Graduat
 
 ![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-blue?logo=googlechrome)
 ![License](https://img.shields.io/badge/License-MIT-green)
+![GitHub release](https://img.shields.io/github/v/release/junruren/MIT-EECS-AAGS?display_name=tag)
+![Build Status](https://img.shields.io/github/actions/workflow/status/junruren/MIT-EECS-AAGS/release.yml?branch=main)
 
 ## 🎯 What It Does
 
@@ -96,6 +98,35 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+For detailed guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## 🚀 Development & Release
+
+### Building the Extension
+
+```bash
+npm run build
+```
+
+This creates a production-ready zip file in the `chrome-extension/` directory.
+
+### Creating a Release
+
+Releases are automated via GitHub Actions. To create a new release:
+
+1. Update version in `chrome-extension/manifest.json`
+2. Update `CHANGELOG.md` with changes
+3. Commit and push to main
+4. Create and push a version tag:
+   ```bash
+   git tag v1.0.1
+   git push origin v1.0.1
+   ```
+
+The GitHub Action will automatically build and create a release with the extension zip file attached.
+
+For detailed instructions, see [RELEASE.md](RELEASE.md).
 
 ## 📝 License
 

@@ -1,0 +1,86 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Triggers on version tags like v1.0.0, v1.2.3, etc.
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write  # Required for creating releases
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Extract version from tag
+        id: version
+        run: |
+          # Remove 'v' prefix from tag to get version number
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version: $VERSION"
+      
+      - name: Verify manifest.json version matches tag
+        run: |
+          MANIFEST_VERSION=$(grep -o '"version": "[^"]*' chrome-extension/manifest.json | cut -d'"' -f4)
+          TAG_VERSION="${{ steps.version.outputs.version }}"
+          
+          if [ "$MANIFEST_VERSION" != "$TAG_VERSION" ]; then
+            echo "❌ Error: manifest.json version ($MANIFEST_VERSION) doesn't match tag version ($TAG_VERSION)"
+            exit 1
+          fi
+          echo "✓ Version verified: $MANIFEST_VERSION"
+      
+      - name: Build extension
+        run: |
+          cd chrome-extension
+          chmod +x build.sh
+          ./build.sh
+      
+      - name: Verify build output
+        run: |
+          ZIP_FILE="chrome-extension/mit-eecs-aags-checker-v${{ steps.version.outputs.version }}.zip"
+          if [ ! -f "$ZIP_FILE" ]; then
+            echo "❌ Error: Build output not found: $ZIP_FILE"
+            exit 1
+          fi
+          echo "✓ Build successful: $ZIP_FILE"
+          ls -lh "$ZIP_FILE"
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: chrome-extension/mit-eecs-aags-checker-v${{ steps.version.outputs.version }}.zip
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          body: |
+            ## MIT EECS AAGS Checker v${{ steps.version.outputs.version }}
+            
+            ### 📦 Installation
+            1. Download the `mit-eecs-aags-checker-v${{ steps.version.outputs.version }}.zip` file below
+            2. Extract the zip file
+            3. Open Chrome and go to `chrome://extensions/`
+            4. Enable "Developer mode" (toggle in top right)
+            5. Click "Load unpacked" and select the extracted folder
+            
+            ### 🎯 What's Changed
+            See the full changelog in [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md)
+            
+            ### 📝 Release Notes
+            <!-- Auto-generated release notes will appear below -->
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build summary
+        run: |
+          echo "### ✅ Release Published Successfully! 🎉" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** v${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Release URL:** https://github.com/${{ github.repository }}/releases/tag/v${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The Chrome extension zip file has been attached to the release." >> $GITHUB_STEP_SUMMARY
