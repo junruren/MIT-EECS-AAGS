@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "MIT EECS AAGS Checker",
+  "version": "1.0",
+  "description": "Automatically highlights AAGS subjects on MIT EECS who_is_teaching_what pages",
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://eecseduportal.mit.edu/*",
+    "https://eecsis.mit.edu/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://eecseduportal.mit.edu/eduportal/who_is_teaching_what/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "EECS AAGS Checker"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

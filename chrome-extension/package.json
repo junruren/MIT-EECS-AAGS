@@ -1,0 +1,17 @@
+{
+  "name": "mit-eecs-aags-checker",
+  "version": "1.0.0",
+  "description": "Chrome extension to highlight AAGS subjects on MIT EECS who_is_teaching_what pages",
+  "main": "content.js",
+  "scripts": {
+    "test": "echo \"Open test.html in browser to test extension functionality\""
+  },
+  "keywords": [
+    "chrome-extension",
+    "mit",
+    "eecs",
+    "education"
+  ],
+  "author": "Junru Ren",
+  "license": "MIT"
+}
