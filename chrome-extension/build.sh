@@ -40,6 +40,8 @@ echo "Copying extension files..."
 cp manifest.json "$BUILD_DIR/"
 cp background.js "$BUILD_DIR/"
 cp content.js "$BUILD_DIR/"
+cp offscreen.html "$BUILD_DIR/"
+cp offscreen.js "$BUILD_DIR/"
 cp popup.html "$BUILD_DIR/"
 cp popup.js "$BUILD_DIR/"
 

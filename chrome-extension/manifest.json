@@ -4,11 +4,9 @@
   "version": "1.0.0",
   "description": "Automatically highlights AAGS subjects on MIT EECS who_is_teaching_what pages",
   "permissions": [
-    "activeTab",
-    "storage"
+    "offscreen"
   ],
   "host_permissions": [
-    "https://eecseduportal.mit.edu/*",
     "https://eecsis.mit.edu/*"
   ],
   "background": {
@@ -16,7 +14,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://eecseduportal.mit.edu/eduportal/who_is_teaching_what/*"],
+      "matches": ["https://eecseduportal.mit.edu/eduportal/who_is_teaching_what*"],
       "js": ["content.js"],
       "run_at": "document_idle"
     }
