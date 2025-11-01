@@ -69,5 +69,6 @@ chrome-extension/build/
 
 # Saved HTML files for testing (but keep test.html and popup.html)
 chrome-extension/*.html
+!chrome-extension/offscreen.html
 !chrome-extension/popup.html
 !chrome-extension/test.html
