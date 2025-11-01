@@ -40,9 +40,10 @@ When you visit any MIT EECS "who is teaching what" page (for any semester), this
 
 ## 🖼️ Screenshots
 
-<!-- Add screenshots here -->
+![](screenshot_before.png)
 *Before: Standard who_is_teaching_what table*
 
+![](screenshot.png)
 *After: Table with AAGS column showing checkmarks*
 
 ## ✨ Features
