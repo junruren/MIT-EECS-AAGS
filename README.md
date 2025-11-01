@@ -1,103 +1,121 @@
-# MIT EECS AAGS Tools
+# MIT EECS AAGS Checker
 
-A collection of tools for MIT EECS students to work with subject data and AAGS (Approved Advanced Graduate Subjects) requirements.
+A Chrome extension that automatically highlights AAGS (Approved Advanced Graduate Subjects) on MIT EECS "who is teaching what" pages.
 
-## Components
+![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-blue?logo=googlechrome)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-### 1. Python Modules (`eecs.py` & `eecs_course_parser.py`)
+## 🎯 What It Does
 
-Command-line tools for scraping and parsing MIT EECS data.
+When you visit any MIT EECS "who is teaching what" page (for any semester), this extension automatically:
+- Fetches the latest AAGS requirements list
+- Adds an "AAGS" column at the beginning of the subject table
+- Shows ✓ for subjects on the AAGS list
+- Lists matching subjects for multi-subject entries (e.g., "6.1000/A/B")
 
-#### Features
-- **Subject Schedule Scraping**: Fetch course schedules from any semester
-- **AAGS List Extraction**: Get the complete list of AAGS subjects
-- **Subject Number Parsing**: Handle new/old numbering system transitions
-- **Multiple Subject Expansion**: Parse complex subject formats like "6.1000/A/B"
+## 📦 Installation
 
-#### Usage
-```python
-from eecs import get_who_is_teaching_what, get_aags
-from eecs_course_parser import parse_subject_number
+### Option 1: Install from Chrome Web Store (Coming Soon)
+<!-- Once published, add the link here -->
 
-# Get current semester schedule
-df, semester = get_who_is_teaching_what()
-print(f"Found {len(df)} subjects for {semester}")
+### Option 2: Install from Source (Developer Mode)
 
-# Get AAGS list
-aags_subjects = get_aags()
-print(f"AAGS subjects: {len(aags_subjects)}")
+1. **Download the Extension**
+   ```bash
+   git clone https://github.com/junruren/MIT-EECS-AAGS.git
+   cd MIT-EECS-AAGS-Classes/chrome-extension
+   ```
 
-# Parse complex subject formats
-subjects = parse_subject_number("6.1000/A/B[6.0001+2]")
-print(subjects)  # ['6.1000', '6.100A', '6.100B']
-```
+2. **Install in Chrome**
+   - Open Chrome and navigate to `chrome://extensions/`
+   - Enable "Developer mode" (toggle in top right)
+   - Click "Load unpacked"
+   - Select the `chrome-extension` folder
 
-### 2. Chrome Extension (`chrome-extension/`)
+3. **Use It**
+   - Visit any [MIT EECS who_is_teaching_what page](https://eecseduportal.mit.edu/eduportal/who_is_teaching_what/)
+   - The AAGS column will appear automatically!
 
-Browser extension that automatically enhances who_is_teaching_what pages.
+## 🖼️ Screenshots
 
-#### Features
-- **Automatic AAGS Detection**: Adds AAGS column to any who_is_teaching_what page
-- **Smart Subject Matching**: Handles single and multiple subject entries
-- **Visual Indicators**: Checkmarks for AAGS subjects, lists for partial matches
-- **Real-time Updates**: Fetches latest AAGS data automatically
+<!-- Add screenshots here -->
+*Before: Standard who_is_teaching_what table*
 
-#### Installation
-1. Open Chrome and go to `chrome://extensions/`
-2. Enable "Developer mode"
-3. Click "Load unpacked" and select the `chrome-extension` folder
-4. Visit any who_is_teaching_what page to see the AAGS column
+*After: Table with AAGS column showing checkmarks*
 
-#### What It Does
-- **Single Subject**: `6.0001` → ✓ (checkmark if on AAGS)
-- **Multiple Subjects**: `6.1000/A/B[6.0001+2]` → `6.100A, 6.100B` (only AAGS matches)
-- **No Match**: Empty cell
+## ✨ Features
 
-## Subject Number Formats
+- **Automatic Detection**: Works on any semester's who_is_teaching_what page
+- **Real-time AAGS Data**: Fetches the current AAGS list from MIT's degree requirements page
+- **Smart Subject Parsing**: Handles complex formats like "6.1000/A/B[6.0001+2]"
+- **Visual Indicators**:
+  - ✓ Green checkmark for single AAGS subjects
+  - Subject list (e.g., "6.100A, 6.100B") for partial matches in multi-subject entries
+  - Empty cell for non-AAGS subjects
+- **New Numbering System**: Consistently uses MIT's new 4-digit subject numbering
 
-The tools handle various MIT EECS subject number formats:
+## 🔧 Subject Number Formats Supported
 
-### Simple Format
-- `6.0001` - Single subject in new numbering
-- `6.UAR` - Lettered subject (unchanged)
+| Format | Example | Parsed As |
+|--------|---------|-----------|
+| Simple | `6.0001` | `["6.0001"]` |
+| Combo (new[old]) | `6.1220J[6.046]` | `["6.1220J"]` |
+| Multiple | `6.1000/A/B` | `["6.1000", "6.100A", "6.100B"]` |
+| Complex | `6.1000/A/B[6.0001+2]` | `["6.1000", "6.100A", "6.100B"]` |
 
-### Combo Format
-- `6.1220J[6.046]` - New number with old number in brackets
-- Parsed as: `["6.1220J"]`
+## 🛠️ Development
 
-### Multiple Subjects
-- `6.1000/A/B` - Subject with variants
-- Parsed as: `["6.1000", "6.100A", "6.100B"]`
+This repository contains both the Chrome extension and development tools:
 
-### Complex Format
-- `6.1000/A/B[6.0001+2]` - Multiple subjects with old numbering
-- Parsed as: `["6.1000", "6.100A", "6.100B"]`
+### Chrome Extension (`/chrome-extension`)
+- Production-ready extension code
+- See [chrome-extension/README.md](chrome-extension/README.md)
 
-## Development
+### Python Development Tools (`/python-tools`)
+- Scripts for scraping and analyzing EECS data
+- Subject number parsing utilities
+- Jupyter notebook for testing
+- See [python-tools/README.md](python-tools/README.md)
 
-### Python Modules
-- `eecs.py`: Main scraping functionality
-- `eecs_course_parser.py`: Subject number parsing logic
-- `main.ipynb`: Test notebook
+## 📋 Requirements
 
-### Chrome Extension
-- `manifest.json`: Extension configuration
-- `content.js`: Main content script
-- `popup.html/js`: Extension popup
-- `test.html`: Local test page
+### For Users
+- Chrome browser (or Chromium-based browser)
+- Access to MIT EECS websites
 
-## Requirements
+### For Developers
+- Chrome browser for testing
+- Python 3.8+ (optional, for development tools)
 
-### Python
-- Python 3.8+
-- requests
-- beautifulsoup4
-- pandas
+## 🤝 Contributing
 
-### Chrome Extension
-- Chrome browser
-- Developer mode enabled
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## License
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-For educational use by MIT EECS students.
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🎓 For MIT EECS Students
+
+This tool is designed to help MIT EECS students quickly identify which subjects satisfy AAGS requirements when planning their course schedules.
+
+**Note**: Always verify subject requirements with official MIT EECS academic resources.
+
+## 🐛 Known Issues
+
+- Extension requires page reload if AAGS data changes during browsing session
+- Icons are placeholder images (contributions welcome!)
+
+## 📧 Contact
+
+For questions or issues, please [open an issue](https://github.com/junruren/MIT-EECS-AAGS/issues) on GitHub.
+
+---
+
+Made with ❤️ for MIT EECS students
