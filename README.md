@@ -5,7 +5,7 @@ A Chrome extension that automatically highlights AAGS (Approved Advanced Graduat
 ![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-blue?logo=googlechrome)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![GitHub release](https://img.shields.io/github/v/release/junruren/MIT-EECS-AAGS?display_name=tag)
-![Build Status](https://img.shields.io/github/actions/workflow/status/junruren/MIT-EECS-AAGS/release.yml?branch=main)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/junruren/MIT-EECS-AAGS/release.yml?branch=main)](https://github.com/junruren/MIT-EECS-AAGS/actions/workflows/release.yml)
 
 ## 🎯 What It Does
 
