@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "MIT EECS AAGS Checker",
-  "version": "1.0",
+  "version": "1.0.0",
   "description": "Automatically highlights AAGS subjects on MIT EECS who_is_teaching_what pages",
   "permissions": [
     "activeTab",
