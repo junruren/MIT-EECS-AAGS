@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "MIT EECS AAGS Checker",
-  "version": "1.1.1",
-  "description": "Automatically highlights AAGS subjects on MIT EECS who_is_teaching_what pages",
+  "version": "2.0.0",
+  "description": "Highlights and annotates AAGS subjects across MIT course catalog and planning pages",
   "permissions": [
     "offscreen"
   ],
@@ -15,7 +15,16 @@
   "content_scripts": [
     {
       "matches": ["https://eecseduportal.mit.edu/eduportal/who_is_teaching_what*"],
-      "js": ["content.js"],
+      "js": ["aags-common.js", "content.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://catalog.mit.edu/subjects/*",
+        "https://student.mit.edu/catalog/*",
+        "https://www.eecs.mit.edu/academics/subject-updates*"
+      ],
+      "js": ["aags-common.js", "content-annotator.js"],
       "run_at": "document_idle"
     }
   ],

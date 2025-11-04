@@ -1,7 +1,7 @@
 {
   "name": "mit-eecs-aags-checker",
-  "version": "1.1.1",
-  "description": "Automatically highlights AAGS subjects on MIT EECS who_is_teaching_what pages",
+  "version": "2.0.0",
+  "description": "Highlights and annotates AAGS subjects across MIT course catalog and planning pages",
   "main": "content.js",
   "scripts": {
     "sync": "node scripts/sync-version.js",

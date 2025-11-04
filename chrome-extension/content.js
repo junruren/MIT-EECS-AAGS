@@ -1,71 +1,19 @@
 /**
  * MIT EECS AAGS Checker Chrome Extension
  * Content script that runs on who_is_teaching_what pages
+ * Uses shared functions from aags-common.js
  */
 
-// Global variable to store AAGS subjects
+// Global variable to store AAGS subjects (for this script)
 let aagsSubjects = new Set();
 
-async function fetchAAGSList() {
-    try {
-        console.log('Content: Requesting AAGS list from background...');
-        
-        // Send message to background script to fetch AAGS (bypasses CORS)
-        const response = await chrome.runtime.sendMessage({ action: 'fetchAAGS' });
-        
-        if (response.success) {
-            // Populate the global set
-            response.subjects.forEach(subject => aagsSubjects.add(subject));
-            console.log(`Content: Loaded ${aagsSubjects.size} AAGS subjects`);
-            console.log('Sample AAGS subjects:', Array.from(aagsSubjects).slice(0, 10));
-        } else {
-            console.error('Failed to fetch AAGS list:', response.error);
-        }
-    } catch (error) {
-        console.error('Error fetching AAGS list:', error);
-    }
-}
+// Note: fetchAAGSList() and parseSubjectNumber() are now provided by aags-common.js
 
-function parseSubjectNumber(subjectString) {
-    if (!subjectString || !subjectString.trim()) {
-        return [];
-    }
-
-    subjectString = subjectString.trim();
-    
-    // Remove subscript content (old numbers in brackets)
-    // Example: "6.1220[6.046]" or "6.1220J[6.046]"
-    subjectString = subjectString.replace(/\[.*?\]/g, '');
-
-    // Step 1: Extract the new number portion
-    let newNumberPart = subjectString.trim();
-
-    // Step 2: Check for slash notation indicating multiple subjects
-    if (newNumberPart.includes('/')) {
-        return expandMultipleSubjects(newNumberPart);
-    } else {
-        return [newNumberPart];
-    }
-}
-
-function expandMultipleSubjects(subjectPart) {
-    const parts = subjectPart.split('/');
-    if (parts.length === 1) {
-        return [subjectPart];
-    }
-
-    const base = parts[0].trim();
-    const subjects = [base];
-
-    for (let i = 1; i < parts.length; i++) {
-        const suffix = parts[i].trim();
-        if (suffix) {
-            // Replace last char with suffix
-            subjects.push(base.slice(0, -1) + suffix);
-        }
-    }
-
-    return subjects;
+async function fetchAAGSListForTable() {
+    const aagsSet = await fetchAAGSList();
+    aagsSubjects = aagsSet;
+    console.log(`Content: Loaded ${aagsSubjects.size} AAGS subjects`);
+    console.log('Sample AAGS subjects:', Array.from(aagsSubjects).slice(0, 10));
 }
 
 function checkAAGSSubjects(subjectNumbers) {
@@ -195,7 +143,7 @@ async function main() {
     console.log('EECS AAGS Checker: Loading...');
 
     // Fetch AAGS list
-    await fetchAAGSList();
+    await fetchAAGSListForTable();
 
     // Add AAGS column to table
     addAAGSColumn();

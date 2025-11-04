@@ -9,11 +9,24 @@ A Chrome extension that automatically highlights AAGS (Approved Advanced Graduat
 
 ## 🎯 What It Does
 
-When you visit any MIT EECS "who is teaching what" page (for any semester), this extension automatically:
+This extension helps MIT EECS students identify AAGS (Approved Advanced Graduate Subjects) across multiple MIT websites:
+
+### 1. Who Is Teaching What Table
+When you visit any MIT EECS "who is teaching what" page (for any semester), the extension automatically:
 - Fetches the latest AAGS requirements list
 - Adds an "AAGS" column at the beginning of the subject table
 - Shows ✓ for subjects on the AAGS list
 - Lists matching subjects for multi-subject entries (e.g., "6.1000/A/B")
+
+### 2. MIT Course Catalog Pages (NEW in v2.0.0)
+When you browse MIT course catalogs and planning pages, the extension automatically:
+- Detects subject numbers in page text (e.g., "6.1200", "18.650", "9.66")
+- Adds a green <sup>AAGS</sup> superscript link next to AAGS subjects
+- Links directly to MIT's AAGS requirements page
+- Works on:
+  - Course catalog pages (catalog.mit.edu/subjects/*)
+  - Student catalog pages (student.mit.edu/catalog/*)
+  - EECS subject updates (www.eecs.mit.edu/academics/subject-updates*)
 
 ## 📦 Installation
 
@@ -36,18 +49,28 @@ When you visit any MIT EECS "who is teaching what" page (for any semester), this
 
 3. **Use It**
    - Visit any [MIT EECS who_is_teaching_what page](https://eecseduportal.mit.edu/eduportal/who_is_teaching_what/)
-   - The AAGS column will appear automatically!
+   - Or browse MIT course catalog pages (catalog.mit.edu, student.mit.edu, eecs.mit.edu)
+   - The extension will automatically highlight AAGS subjects!
 
 ## 🖼️ Screenshots
 
-![](screenshot_before.png)
+### Table Enhancement Feature
+![](screenshots/who_is_teaching_what_before.png)
 *Before: Standard who_is_teaching_what table*
 
 ![](screenshot.png)
 *After: Table with AAGS column showing checkmarks*
 
+### Text Annotation Feature (v2.0.0)
+When browsing MIT course catalog pages, AAGS subjects are automatically annotated with green superscript links:
+- Example: "Students should complete 6.1200<sup style="color: #28a745">AAGS</sup> before taking this subject"
+- Clicking the <sup>AAGS</sup> link takes you directly to MIT's AAGS requirements page
+![](screenshots/mit_catalog.png)
+![](screenshots/subject_updates.png)
+
 ## ✨ Features
 
+### Table Enhancement (who_is_teaching_what)
 - **Automatic Detection**: Works on any semester's who_is_teaching_what page
 - **Real-time AAGS Data**: Fetches the current AAGS list from MIT's degree requirements page
 - **Smart Subject Parsing**: Handles complex formats like "6.1000/A/B[6.0001+2]"
@@ -55,16 +78,30 @@ When you visit any MIT EECS "who is teaching what" page (for any semester), this
   - ✓ Green checkmark for single AAGS subjects
   - Subject list (e.g., "6.100A, 6.100B") for partial matches in multi-subject entries
   - Empty cell for non-AAGS subjects
+
+### Text Annotation (catalog pages) - NEW in v2.0.0
+- **Automatic AAGS Detection**: Scans page text for subject numbers
+- **Superscript Links**: Adds green <sup>AAGS</sup> markers next to AAGS subjects
+- **Dynamic Content Support**: Watches for page updates (works with single-page applications)
+- **Smart Pattern Matching**: Detects various formats (6.1200, 18.650, 9.UAR, etc.)
+- **Unobtrusive**: Maintains original page layout and functionality
+
+### General
 - **New Numbering System**: Consistently uses MIT's new 4-digit subject numbering
+- **No Remote Code**: All code is bundled with the extension (no external script loading)
+- **Lightweight**: Minimal permissions required
 
 ## 🔧 Subject Number Formats Supported
 
 | Format | Example | Parsed As |
 |--------|---------|-----------|
 | Simple | `6.0001` | `["6.0001"]` |
+| With suffix | `6.100A` | `["6.100A"]` |
+| Special subjects | `6.S890` | `["6.S890"]` |
 | Combo (new[old]) | `6.1220J[6.046]` | `["6.1220J"]` |
 | Multiple | `6.1000/A/B` | `["6.1000", "6.100A", "6.100B"]` |
 | Complex | `6.1000/A/B[6.0001+2]` | `["6.1000", "6.100A", "6.100B"]` |
+| Research/Thesis | `6.UAR`, `6.UAT` | `["6.UAR"]`, `["6.UAT"]` |
 
 ## 🛠️ Development
 

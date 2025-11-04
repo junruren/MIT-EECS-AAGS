@@ -14,6 +14,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for multiple AAGS requirement categories
 - Firefox extension version
 
+## [2.0.0] - 2025-11-04
+
+### Added
+- 🎯 **Major Feature**: Automatic AAGS annotation across MIT course catalog websites
+- Annotates AAGS subjects with green superscript links on:
+  - https://catalog.mit.edu/subjects/*
+  - https://student.mit.edu/catalog/*
+  - https://www.eecs.mit.edu/academics/subject-updates*
+- Superscript annotations link directly to official AAGS requirements
+- Dynamic content observation for single-page applications
+- Shared AAGS utility module (`aags-common.js`) for code reuse
+
+### Changed
+- Refactored code architecture to support multiple content scripts
+- Expanded host permissions to cover additional MIT domains
+- Updated extension description to reflect broader functionality
+
+### Technical
+- New `content-annotator.js` for catalog page annotation
+- Shared `aags-common.js` module with reusable AAGS matching logic
+- MutationObserver for detecting dynamically loaded content
+- Improved regex patterns for subject number detection
+
+## [1.1.1] - 2025-11-04
+
+### Changed
+- Minor version management improvements
+- Documentation updates
+
 ## [1.1.0] - 2025-11-04
 
 ### Added
