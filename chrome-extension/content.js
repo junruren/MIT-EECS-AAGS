@@ -87,16 +87,46 @@ function addAAGSColumn() {
     if (headerRows.length > 0) {
         const firstHeaderRow = headerRows[0];
         const aagsHeader = document.createElement('th');
-        aagsHeader.textContent = 'AAGS';
         aagsHeader.style.fontWeight = 'bold';
         aagsHeader.style.textAlign = 'center';
+        
+        // Make AAGS header a hyperlink to the official requirements page
+        const aagsLink = document.createElement('a');
+        aagsLink.href = 'https://eecsis.mit.edu/degree_requirements.html#AAGS';
+        aagsLink.textContent = 'AAGS';
+        aagsLink.target = '_blank';
+        aagsLink.rel = 'noopener noreferrer';
+        //aagsLink.style.color = 'inherit';
+        //aagsLink.style.textDecoration = 'none';
+        aagsLink.title = 'View official AAGS requirements';
+        
+        // Add hover effect
+        aagsLink.addEventListener('mouseenter', () => {
+            aagsLink.style.textDecoration = 'underline';
+        });
+        aagsLink.addEventListener('mouseleave', () => {
+            aagsLink.style.textDecoration = 'none';
+        });
+        
+        aagsHeader.appendChild(aagsLink);
         firstHeaderRow.insertBefore(aagsHeader, firstHeaderRow.firstChild);
         
-        // Add empty cell to second header row if it exists
+        // Add hint cell to second header row if it exists
         if (headerRows.length > 1) {
             const secondHeaderRow = headerRows[1];
-            const emptyCell = document.createElement('td');
-            secondHeaderRow.insertBefore(emptyCell, secondHeaderRow.firstChild);
+            const hintCell = document.createElement('td');
+            hintCell.style.textAlign = 'center';
+            hintCell.style.whiteSpace = 'normal';
+            hintCell.style.maxWidth = '8em';  // Use em units for better responsiveness
+            hintCell.style.wordBreak = 'break-word';
+            
+            const hintSpan = document.createElement('span');
+            hintSpan.style.fontSize = '80%';
+            hintSpan.style.fontStyle = 'italic';
+            hintSpan.innerHTML = 'scroll down to see <span style="color: green; font-weight: bold;">eligible subjects</span> identified in green';
+            
+            hintCell.appendChild(hintSpan);
+            secondHeaderRow.insertBefore(hintCell, secondHeaderRow.firstChild);
         }
     }
 

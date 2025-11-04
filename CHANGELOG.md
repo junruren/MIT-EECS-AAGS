@@ -14,6 +14,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for multiple AAGS requirement categories
 - Firefox extension version
 
+## [1.1.0] - 2025-11-04
+
+### Added
+- AAGS column header is now a clickable hyperlink to the official AAGS requirements page
+- Added helpful hint text in the second header row explaining how AAGS subjects are identified
+- Hover effect on AAGS header link for better user experience
+
+### Improved
+- Better user guidance with inline documentation
+- Enhanced discoverability of official AAGS requirements
+
 ## [1.0.0] - 2025-10-31
 
 ### Added
@@ -37,7 +48,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- **v1.1.0** (2025-11-04) - Enhanced user experience with clickable header and hints
 - **v1.0.0** (2025-10-31) - Initial release
 
-[Unreleased]: https://github.com/junruren/MIT-EECS-AAGS/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/junruren/MIT-EECS-AAGS/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/junruren/MIT-EECS-AAGS/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/junruren/MIT-EECS-AAGS/releases/tag/v1.0.0

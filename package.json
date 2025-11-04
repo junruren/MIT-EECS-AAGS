@@ -1,6 +1,6 @@
 {
   "name": "mit-eecs-aags-checker",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Chrome extension to highlight AAGS subjects on MIT EECS who_is_teaching_what pages",
   "main": "content.js",
   "scripts": {
