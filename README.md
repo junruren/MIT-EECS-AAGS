@@ -116,16 +116,19 @@ This creates a production-ready zip file in the `chrome-extension/` directory.
 
 Releases are automated via GitHub Actions. To create a new release:
 
-1. Update version in `chrome-extension/manifest.json`
+1. Update version in `chrome-extension/manifest.json` (single source of truth)
 2. Update `CHANGELOG.md` with changes
-3. Commit and push to main
-4. Create and push a version tag:
+3. Run `npm run build` (automatically syncs version to package.json)
+4. Commit and push to main
+5. Create and push a version tag:
    ```bash
    git tag v1.0.1
    git push origin v1.0.1
    ```
 
 The GitHub Action will automatically build and create a release with the extension zip file attached.
+
+**Note**: `package.json` version is automatically synced from `manifest.json`.
 
 For detailed instructions, see [RELEASE.md](RELEASE.md).
 
