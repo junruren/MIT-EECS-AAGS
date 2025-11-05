@@ -4,17 +4,48 @@ document.addEventListener('DOMContentLoaded', function() {
     const statusDiv = document.getElementById('status');
     const refreshBtn = document.getElementById('refresh');
 
-    // Check if we're on a who_is_teaching_what page
+    // Define supported page patterns
+    const supportedPages = [
+        {
+            pattern: 'eecseduportal.mit.edu/eduportal/who_is_teaching_what',
+            name: 'Who Is Teaching What table'
+        },
+        {
+            pattern: 'catalog.mit.edu/subjects/',
+            name: 'MIT Course Catalog'
+        },
+        {
+            pattern: 'student.mit.edu/catalog/',
+            name: 'MIT Student Catalog'
+        },
+        {
+            pattern: 'www.eecs.mit.edu/academics/subject-updates',
+            name: 'EECS Subject Updates'
+        }
+    ];
+
+    // Check if we're on a supported page
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         const currentTab = tabs[0];
-        const isValidPage = currentTab.url.includes('eecseduportal.mit.edu/eduportal/who_is_teaching_what');
+        const currentUrl = currentTab.url || '';
 
-        if (isValidPage) {
+        // Find which supported page we're on (if any)
+        const matchedPage = supportedPages.find(page => currentUrl.includes(page.pattern));
+
+        if (matchedPage) {
             statusDiv.className = 'status active';
-            statusDiv.textContent = 'Active on who_is_teaching_what page';
+            statusDiv.innerHTML = `<strong>Active</strong><br>On ${matchedPage.name}`;
         } else {
             statusDiv.className = 'status inactive';
-            statusDiv.textContent = 'Not on a who_is_teaching_what page';
+            statusDiv.innerHTML = `
+                <strong>Not on a supported page</strong><br>
+                <br>
+                <small>Supported pages:</small><br>
+                <small>• Who Is Teaching What table</small><br>
+                <small>• MIT Course Catalog (catalog.mit.edu)</small><br>
+                <small>• Student Catalog (student.mit.edu)</small><br>
+                <small>• EECS Subject Updates</small>
+            `;
         }
     });
 

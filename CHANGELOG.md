@@ -14,6 +14,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for multiple AAGS requirement categories
 - Firefox extension version
 
+## [2.0.1] - 2025-11-04
+
+### Improved
+- Enhanced popup window to show status for all 4 supported page types
+- Popup now displays which specific page type is active (Who Is Teaching What, Course Catalog, Student Catalog, or Subject Updates)
+- When not on a supported page, popup lists all supported page types
+- Improved popup styling and layout
+
 ## [2.0.0] - 2025-11-04
 
 ### Added
