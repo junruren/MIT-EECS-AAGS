@@ -2,7 +2,7 @@
 
 A Chrome extension that automatically highlights AAGS (Approved Advanced Graduate Subjects) on MIT EECS "who is teaching what" pages.
 
-![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-blue?logo=googlechrome)
+[![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-blue?logo=googlechrome)](https://chromewebstore.google.com/detail/mit-eecs-aags-checker/nfoffleelcgbabibmmbjmicefmanmeeo)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![GitHub release](https://img.shields.io/github/v/release/junruren/MIT-EECS-AAGS?display_name=tag)
 [![Release Status](https://img.shields.io/github/actions/workflow/status/junruren/MIT-EECS-AAGS/release.yml)](https://github.com/junruren/MIT-EECS-AAGS/actions/workflows/release.yml)
@@ -30,8 +30,10 @@ When you browse MIT course catalogs and planning pages, the extension automatica
 
 ## 📦 Installation
 
-### Option 1: Install from Chrome Web Store (Coming Soon)
-<!-- Once published, add the link here -->
+### Option 1: Install from Chrome Web Store
+1. Visit the [MIT EECS AAGS Checker Chrome Web Store page](https://chromewebstore.google.com/detail/mit-eecs-aags-checker/nfoffleelcgbabibmmbjmicefmanmeeo)
+2. Click "Add to Chrome"
+3. Confirm by clicking "Add extension"
 
 ### Option 2: Install from Source (Developer Mode)
 
