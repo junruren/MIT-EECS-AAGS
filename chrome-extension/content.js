@@ -10,10 +10,65 @@ let aagsSubjects = new Set();
 // Note: fetchAAGSList() and parseSubjectNumber() are now provided by aags-common.js
 
 async function fetchAAGSListForTable() {
-    const aagsSet = await fetchAAGSList();
-    aagsSubjects = aagsSet;
+    const result = await fetchAAGSList();
+    if (!result.success) {
+        showErrorBanner(`Failed to load AAGS list: ${result.error}`);
+        console.error('Content: Failed to fetch AAGS list:', result.error);
+        aagsSubjects = new Set();
+        return;
+    }
+    aagsSubjects = result.subjects;
     console.log(`Content: Loaded ${aagsSubjects.size} AAGS subjects`);
     console.log('Sample AAGS subjects:', Array.from(aagsSubjects).slice(0, 10));
+}
+
+function showErrorBanner(message) {
+    // Create error banner at the top of the page
+    const banner = document.createElement('div');
+    banner.id = 'aags-error-banner';
+    banner.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background-color: #f8d7da;
+        color: #721c24;
+        border-bottom: 2px solid #f5c6cb;
+        padding: 12px 20px;
+        z-index: 10000;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    `;
+    
+    banner.innerHTML = `
+        <strong>WARNING - EECS AAGS Checker Extension:</strong> ${message}
+        <span style="margin-left: 10px; color: #666; font-size: 12px;">This may be due to changes in the MIT EECS website.</span>
+        <button id="aags-dismiss-banner" style="
+            float: right;
+            background: transparent;
+            border: 1px solid #721c24;
+            color: #721c24;
+            padding: 4px 12px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 12px;
+        ">Dismiss</button>
+    `;
+    
+    document.body.insertBefore(banner, document.body.firstChild);
+    
+    // Add dismiss functionality
+    document.getElementById('aags-dismiss-banner')?.addEventListener('click', () => {
+        banner.remove();
+    });
+    
+    // Auto-dismiss after 10 seconds
+    setTimeout(() => {
+        if (banner.parentNode) {
+            banner.remove();
+        }
+    }, 10000);
 }
 
 function checkAAGSSubjects(subjectNumbers) {

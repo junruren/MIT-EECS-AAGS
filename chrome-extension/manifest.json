@@ -4,7 +4,8 @@
   "version": "2.2.0",
   "description": "Highlights and annotates AAGS subjects across MIT course catalog and planning pages",
   "permissions": [
-    "offscreen"
+    "offscreen",
+    "activeTab"
   ],
   "host_permissions": [
     "https://eecsis.mit.edu/*"

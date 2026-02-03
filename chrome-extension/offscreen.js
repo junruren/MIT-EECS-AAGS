@@ -16,9 +16,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 async function fetchAndParseAAGS() {
-  const response = await fetch(AAGS_URL, { credentials: 'include' });
+  let response;
+  try {
+    response = await fetch(AAGS_URL, { credentials: 'include' });
+  } catch (error) {
+    throw new Error(`Network error fetching AAGS list: ${error.message || 'Unable to connect to eecsis.mit.edu'}`);
+  }
+
   if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
+    throw new Error(`AAGS list fetch failed with HTTP status ${response.status}. The MIT EECS degree requirements page may be unavailable.`);
   }
 
   const html = await response.text();
@@ -28,7 +34,7 @@ async function fetchAndParseAAGS() {
   const heading = doc.querySelector('h3');
   
   if (!heading || !heading.textContent.includes('AAGS')) {
-    throw new Error('AAGS heading not found in degree requirements page');
+    throw new Error('AAGS heading not found. The degree requirements page format may have changed.');
   }
 
   const container = doc.body;
@@ -50,7 +56,7 @@ async function fetchAndParseAAGS() {
     }
 
     if (!fallbackSubjects.size) {
-      throw new Error('No AAGS subjects found in parsed document');
+      throw new Error('No AAGS subjects found. The degree requirements page format may have changed. Please report this issue.');
     }
 
     return Array.from(fallbackSubjects);

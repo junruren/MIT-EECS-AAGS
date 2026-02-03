@@ -2,6 +2,8 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     const statusDiv = document.getElementById('status');
+    const aagsStatusDiv = document.getElementById('aags-status');
+    const aagsStatusText = document.getElementById('aags-status-text');
     const refreshBtn = document.getElementById('refresh');
 
     // Define supported page patterns
@@ -49,6 +51,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Check AAGS list status
+    checkAAGSStatus();
+
     // Refresh button
     refreshBtn.addEventListener('click', function() {
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -56,3 +61,29 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+async function checkAAGSStatus() {
+    const aagsStatusDiv = document.getElementById('aags-status');
+    const aagsStatusText = document.getElementById('aags-status-text');
+    
+    try {
+        aagsStatusText.textContent = 'Checking...';
+        
+        // Request AAGS list from background
+        const response = await chrome.runtime.sendMessage({ action: 'fetchAAGS' });
+        
+        if (response.success) {
+            const count = response.subjects?.length || 0;
+            aagsStatusDiv.className = 'success';
+            aagsStatusText.innerHTML = `<strong>OK:</strong> Loaded ${count} AAGS subjects`;
+        } else {
+            aagsStatusDiv.className = 'error';
+            const errorMsg = typeof response.error === 'string' ? response.error : (response.error?.message || 'Unknown error');
+            aagsStatusText.innerHTML = `<strong>Failed:</strong> ${errorMsg}`;
+        }
+    } catch (error) {
+        aagsStatusDiv.className = 'error';
+        const errorMsg = error?.message || String(error) || 'Unable to check status';
+        aagsStatusText.innerHTML = `<strong>Error:</strong> ${errorMsg}`;
+    }
+}

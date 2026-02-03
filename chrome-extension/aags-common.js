@@ -8,12 +8,12 @@ let aagsSubjectsCache = null;
 
 /**
  * Fetch the AAGS list from background script
- * @returns {Promise<Set<string>>} Set of AAGS subject numbers
+ * @returns {Promise<{success: boolean, subjects: Set<string>, error?: string}>} Result object with success status, subjects set, and optional error
  */
 async function fetchAAGSList() {
     if (aagsSubjectsCache) {
         console.log('AAGS: Using cached list');
-        return aagsSubjectsCache;
+        return { success: true, subjects: aagsSubjectsCache };
     }
 
     try {
@@ -23,14 +23,16 @@ async function fetchAAGSList() {
         if (response.success) {
             aagsSubjectsCache = new Set(response.subjects);
             console.log(`AAGS: Loaded ${aagsSubjectsCache.size} subjects`);
-            return aagsSubjectsCache;
+            return { success: true, subjects: aagsSubjectsCache };
         } else {
-            console.error('AAGS: Failed to fetch list:', response.error);
-            return new Set();
+            const errorMsg = response.error || 'Unknown error fetching AAGS list';
+            console.error('AAGS: Failed to fetch list:', errorMsg);
+            return { success: false, subjects: new Set(), error: errorMsg };
         }
     } catch (error) {
+        const errorMsg = error.message || String(error);
         console.error('AAGS: Error fetching list:', error);
-        return new Set();
+        return { success: false, subjects: new Set(), error: errorMsg };
     }
 }
 
