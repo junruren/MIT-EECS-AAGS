@@ -1,4 +1,4 @@
-const AAGS_URL = 'https://eecsis.mit.edu/degree_requirements.html';
+const AAGS_URL = 'https://eecsis.mit.edu/degree_requirements.pcgi?program=AAGS';
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.action !== 'offscreenFetchAAGS') {
@@ -25,18 +25,13 @@ async function fetchAndParseAAGS() {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
 
-  const anchor =
-    doc.querySelector('a[name="AAGS"], a[name="aags"]') ??
-    doc.querySelector('a[id="AAGS"], a[id="aags"]');
-
-  if (!anchor) {
-    throw new Error('AAGS anchor not found in degree requirements page');
+  const heading = doc.querySelector('h3');
+  
+  if (!heading || !heading.textContent.includes('AAGS')) {
+    throw new Error('AAGS heading not found in degree requirements page');
   }
 
-  const container =
-    anchor.nextElementSibling ??
-    anchor.parentElement?.querySelector('div, table') ??
-    doc.body;
+  const container = doc.body;
 
   const linkElements = container.querySelectorAll('a.annotated-link');
   const subjects = [];
@@ -46,25 +41,12 @@ async function fetchAndParseAAGS() {
   }
 
   if (!subjects.length) {
-    // As a last resort, scan everything after the anchor
-    const treeWalker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_ELEMENT);
+    // Fallback: scan all annotated-link elements in the document
+    const allLinks = doc.querySelectorAll('a.annotated-link');
     const fallbackSubjects = new Set();
-    let reachedAnchor = false;
 
-    while (treeWalker.nextNode()) {
-      const node = treeWalker.currentNode;
-      if (node === anchor) {
-        reachedAnchor = true;
-        continue;
-      }
-
-      if (!reachedAnchor) {
-        continue;
-      }
-
-      if (node instanceof Element && node.matches('a.annotated-link')) {
-        collectSubjectsFromLink(node, fallbackSubjects);
-      }
+    for (const link of allLinks) {
+      collectSubjectsFromLink(link, fallbackSubjects);
     }
 
     if (!fallbackSubjects.size) {

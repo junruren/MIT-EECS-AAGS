@@ -202,7 +202,7 @@ def get_aags():
         >>> print(f"Found {len(aags_list)} AAGS subjects")
         >>> print(aags_list[:5])  # First 5 subjects
     """
-    url = "https://eecsis.mit.edu/degree_requirements.html"
+    url = "https://eecsis.mit.edu/degree_requirements.pcgi?program=AAGS"
     
     # Fetch the page
     try:
@@ -214,35 +214,30 @@ def get_aags():
     # Parse with BeautifulSoup
     soup = BeautifulSoup(response.content, 'html.parser')
     
-    # Find the AAGS anchor
-    aags_anchor = soup.find('a', {'name': 'AAGS'})
-    if not aags_anchor:
-        raise ValueError("Could not find AAGS section on the page")
+    # Find the AAGS heading
+    aags_heading = soup.find('h3', string=re.compile(r'AAGS\s+Subject\s+List', re.IGNORECASE))
+    if not aags_heading:
+        raise ValueError("Could not find AAGS Subject List heading on the page")
     
-    # The AAGS list is in a div that follows the anchor
-    # Find the next div with style containing 'margin-left'
-    aags_div = aags_anchor.find_next('div', style=re.compile(r'margin-left'))
-    if not aags_div:
-        raise ValueError("Could not find AAGS subject list div")
-    
-    # Extract all subject links within the AAGS div
-    # Subject numbers are in <a> tags with class 'annotated-link'
-    subject_links = aags_div.find_all('a', class_='annotated-link')
+    # Extract all subject links - they use class 'annotated-link'
+    subject_links = soup.find_all('a', class_='annotated-link')
     
     # Extract subject numbers from the links
     aags_subjects = []
     for link in subject_links:
-        # Get only the direct text content (not from child elements)
-        # The subject number is the text directly in the <a> tag, before any <div> children
-        subject_text = link.find(text=True, recursive=False)
+        # Get text from nobr tag if present, otherwise from the link itself
+        nobr = link.find('nobr')
+        if nobr:
+            subject_text = nobr.get_text(strip=True)
+        else:
+            subject_text = link.get_text(strip=True)
         
-        if subject_text:
-            subject_text = subject_text.strip()
-            # Subject numbers match pattern like "6.5060", "18.435", "2.111", etc.
-            match = re.match(r'^([\d]+\.[\d]+)', subject_text)
-            if match:
-                subject_number = match.group(1)
-                aags_subjects.append(subject_number)
+        # Subject numbers match pattern like "6.5060", "18.435", "2.111", etc.
+        # Extract the first occurrence of a subject number pattern
+        match = re.search(r'\b\d+\.\w+', subject_text)
+        if match:
+            subject_number = match.group(0)
+            aags_subjects.append(subject_number)
     
     if not aags_subjects:
         raise ValueError("No AAGS subjects found in the section")

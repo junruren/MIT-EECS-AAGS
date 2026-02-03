@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "MIT EECS AAGS Checker",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Highlights and annotates AAGS subjects across MIT course catalog and planning pages",
   "permissions": [
     "offscreen"
