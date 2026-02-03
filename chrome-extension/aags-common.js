@@ -103,7 +103,7 @@ function createAAGSSuperscript() {
     sup.style.marginLeft = '0.2em';
     
     const link = document.createElement('a');
-    link.href = 'https://eecsis.mit.edu/degree_requirements.html#AAGS';
+    link.href = 'https://eecsis.mit.edu/degree_requirements.pcgi?program=AAGS';
     link.textContent = 'AAGS';
     link.target = '_blank';
     link.rel = 'noopener noreferrer';

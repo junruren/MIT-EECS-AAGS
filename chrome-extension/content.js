@@ -40,7 +40,7 @@ function addAAGSColumn() {
         
         // Make AAGS header a hyperlink to the official requirements page
         const aagsLink = document.createElement('a');
-        aagsLink.href = 'https://eecsis.mit.edu/degree_requirements.html#AAGS';
+        aagsLink.href = 'https://eecsis.mit.edu/degree_requirements.pcgi?program=AAGS';
         aagsLink.textContent = 'AAGS';
         aagsLink.target = '_blank';
         aagsLink.rel = 'noopener noreferrer';
