@@ -77,28 +77,33 @@ function collectSubjectsFromLink(link, collection) {
     }
   };
 
-  for (const node of link.childNodes) {
-    if (node.nodeType === Node.TEXT_NODE) {
-      addMatches(node.textContent);
-    } else if (node.nodeType === Node.ELEMENT_NODE) {
-      const element = /** @type {Element} */ (node);
-      if (element.classList.contains('annotation')) {
-        continue; // Skip the descriptive tooltip content
+  const processElement = (element) => {
+    for (const node of element.childNodes) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        addMatches(node.textContent);
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const el = /** @type {Element} */ (node);
+        // Skip elements that contain old/hidden content
+        if (el.classList.contains('annotation') || el.classList.contains('old') || el.tagName.toLowerCase() === 'old') {
+          continue;
+        }
+        // Recursively process child elements instead of using textContent
+        processElement(el);
       }
-
-      if (element.tagName.toLowerCase() === 'old') {
-        continue; // Ignore legacy numbers shown in annotations
-      }
-
-      addMatches(element.textContent);
     }
-  }
+  };
+
+  processElement(link);
 
   const isCollectionEmpty =
     collection instanceof Set ? collection.size === 0 : collection.length === 0;
 
-  // Some links contain the subject code as their first child only; ensure we capture that
+  // Fallback: if nothing found and collection is empty, try extracting from textContent
+  // (only as last resort for simpler structures)
   if (isCollectionEmpty) {
-    addMatches(link.textContent);
+    // Create a temporary element and process only visible text nodes
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = link.innerHTML.replace(/<span[^>]*class="[^"]*old[^"]*"[^>]*>.*?<\/span>/g, '');
+    addMatches(tempDiv.textContent);
   }
 }

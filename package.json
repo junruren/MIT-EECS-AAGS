@@ -1,6 +1,6 @@
 {
   "name": "mit-eecs-aags-checker",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Highlights and annotates AAGS subjects across MIT course catalog and planning pages",
   "main": "content.js",
   "scripts": {
